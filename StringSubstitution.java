@@ -1,90 +1,89 @@
 package codeEval;
 
+
 import java.util.*;
 import java.io.*;
 
 public class StringSubstitution {
 
 	static ArrayList<String> inp = new ArrayList<String>();
-	static int lastChValue = 0;
 	
 	public static void main(String[] args) {
 		
 		try
 		{
-			BufferedReader br = new BufferedReader(new FileReader(new File("Stsub.txt")));
+			BufferedReader br = new BufferedReader(new FileReader(new File(args[0])));
 			
 			String s;
 			
 			while((s=br.readLine())!=null)
 			{
+				s = s.trim();
 				inp.add(s);
 			}
 		}
 		catch(Exception e)
 		{
-			//10011011001;0110,1001,1001,0,10,11
+		
 		}
 
 		for (int i = 0; i < inp.size(); i++) {
 			
 			ArrayList<String> f = new ArrayList<String>();
-			//ArrayList<String> r = new ArrayList<String>();
 			HashMap<String, String> r = new HashMap<String, String>();
 			
 			String s = inp.get(i);
+			s = s.trim();
+			System.out.println(s);
 			String num = s.substring(0, s.indexOf(";"));
+			num = num.trim();
 			String rNums = s.substring(s.indexOf(";")+1, s.length());
 			String nums[] = rNums.split(",");
 			
 			for (int j = 0; j < nums.length; j++) {
-
-				/*if (j % 2 == 0) {
-					f.add(nums[j]);
-
-				} else {
-					r.add(nums[j]);
-				}*/
-				f.add(nums[j]);
-				r.put(nums[j++], nums[j]);
-			}
-			
-			StringBuilder ans = new StringBuilder();
-			
-			for (int j = 0; j < num.length(); j++) {
 				
-				char c = num.charAt(j);
-				ans.append(c);
-				ans = check(ans, f, r);
+				f.add(nums[j].trim());
+				r.put(nums[j++].trim(), nums[j].trim());
 			}
-			System.out.println(ans.toString());
+			
+			for (int j = 0; j < f.size(); j++) {
+				
+				String st = f.get(j);
+				String re = r.get(st);
+				re = dis(re);
+				num = num.replace(st, re);
+			}
+			
+			num = reDis(num);
+			System.out.println(num);
 		}
 	}
 
-	private static StringBuilder check(StringBuilder ans, ArrayList<String> f, HashMap<String, String> r) {
+	private static String reDis(String num) {
 		
-		String before = ans.substring(0, lastChValue);
-		String after = ans.substring(lastChValue, ans.length());
-		ans = new StringBuilder(after);
+		StringBuilder st = new StringBuilder();
 		
-		String s = "";
-		for (int i = 0; i < ans.length(); i++) {
-			
-			s = ans.substring(i,ans.length());
-			
-			if(f.contains(s))
-			{
-				ans.setLength(ans.length()-s.length());
-				ans.append(r.get(s));
-				lastChValue+=ans.length();
-				break;
-			}
+		for (int i = 0; i < num.length(); i++) {
+			 
+			char c= num.charAt(i);
+			if(c!='*')
+				st.append(c);
 		}
+		
+		return st.toString();
+	}
 
-		if(before!="")
-			return new StringBuilder(before+ans);
-		else
-			return ans;
+	private static String dis(String re) {
+		
+		StringBuilder st = new StringBuilder();
+		st.append('*');
+		
+		for (int i = 0; i < re.length(); i++) {
+			st.append(re.charAt(i));
+			st.append('*');
+		}
+		
+		return st.toString();
 	}
 
 }
